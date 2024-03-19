@@ -27,10 +27,37 @@ services:
     networks:
       - esnet
 
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.0
+    container_name: logstash
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./logstash/jdbc:/usr/share/logstash/jdbc:ro
+    depends_on:
+      - elasticsearch
+    networks:
+      - esnet
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=your_database
+      - POSTGRES_USER=your_username
+      - POSTGRES_PASSWORD=your_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - esnet
+
 volumes:
   esdata1:
     driver: local
-
+  pgdata:
+    driver: local
 networks:
   esnet:
     driver: bridge
