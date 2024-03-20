@@ -1,7 +1,7 @@
 ## 環境起動
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
 ## Elastic Search あれこれ
@@ -52,7 +52,8 @@ insert into blog (title, summary) values
   ('カフェ巡り', '銀座のカフェを巡った日記');
 
 insert into tag (name) values
-  ('cafe', 'coffee');
+  ('cafe'),
+  ('coffee');
 
 insert into blog_tag (blog_title, tag_name) values
   ('カフェ巡り', 'cafe'),
