@@ -1,3 +1,7 @@
+# Change Data Capture Sample
+
+![](./docs/構成.png)
+
 ## 環境起動
 
 ```bash
