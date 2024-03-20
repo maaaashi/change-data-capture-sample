@@ -1,10 +1,14 @@
+## 環境起動
+
 ```bash
 docker compose up
 ```
 
-```json
+## Elastic Search あれこれ
+
+```bash
 # mappingの登録
-PUT /blog_posts
+curl -X PUT "http://localhost:9200/blog" -H 'Content-Type: application/json' -d'
 {
   "mappings": {
     "properties": {
@@ -13,75 +17,44 @@ PUT /blog_posts
       "tags": { "type": "keyword" }
     }
   }
-}
+}'
 
-# データの登録
-POST /blog_posts/_doc/1
-{
-  "title": "Elasticsearchの基本",
-  "summary": "Elasticsearchの基本的な使い方について説明します。",
-  "tags": ["Elasticsearch", "検索エンジン", "基本"]
-}
 
-POST /blog_posts/_doc/2
-{
-  "title": "高度なElasticsearchの使い方",
-  "summary": "Elasticsearchの高度な機能について掘り下げていきます。",
-  "tags": ["Elasticsearch", "高度"]
-}
-
-# タグ検索
-GET /blog_posts/_search
+# docの確認
+curl -X GET "http://localhost:9200/blog/_search?pretty" -H 'Content-Type: application/json' -d'
 {
   "query": {
-    "term": {
-      "tags": "基本"
-    }
-  }
-}
+    "match_all": {}
+  },
+  "size": 10
+}'
 
-# タグかつ部分検索
-GET /blog_posts/_search
+# タイトルで検索
+curl -X GET "http://localhost:9200/blog/_search?pretty" -H 'Content-Type: application/json' -d'
 {
   "query": {
-    "bool": {
-      "must": [
-        {
-          "term": {
-            "tags": "Elasticsearch"
-          }
-        },
-        {
-          "match": {
-            "summary": "基本的な使い方"
-          }
-        }
-      ]
+    "match": {
+      "title": "カフェ巡り"
     }
   }
-}
+}'
+```
 
-# 検索式
-GET /blog_posts/_search
-{
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "term": {
-            "tags": "Elasticsearch"
-          }
-        },
-        {
-          "query_string": {
-            "default_field": "summary",
-            "query": "+基本的な使い方 -高度な"
-          }
-        }
-      ]
-    }
-  }
-}
+## Postgresql データ投入
 
+```bash
+psql -h 127.0.0.1 -U maaaashi -d blog_db
+# Enter 'password'
+```
 
+```sql
+insert into blog (title, summary) values
+  ('カフェ巡り', '銀座のカフェを巡った日記');
+
+insert into tag (name) values
+  ('cafe', 'coffee');
+
+insert into blog_tag (blog_title, tag_name) values
+  ('カフェ巡り', 'cafe'),
+  ('カフェ巡り', 'coffee');
 ```
