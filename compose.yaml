@@ -28,7 +28,7 @@ services:
       - esnet
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.10.0
+    image: docker.elastic.co/logstash/logstash:6.8.2
     container_name: logstash
     command: logstash -f /usr/share/logstash/pipeline/logstash.conf
     volumes:
@@ -43,11 +43,11 @@ services:
     image: postgres:latest
     container_name: postgres
     environment:
-      - POSTGRES_DB=your_database
-      - POSTGRES_USER=your_username
-      - POSTGRES_PASSWORD=your_password
+      - POSTGRES_USER=maaaashi
+      - POSTGRES_PASSWORD=password
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./postgresql/init:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
