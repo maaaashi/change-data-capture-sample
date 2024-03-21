@@ -42,6 +42,16 @@ curl -X GET "http://localhost:9200/blog/_search?pretty" -H 'Content-Type: applic
     }
   }
 }'
+
+# サマリーで検索
+curl -X GET "http://localhost:9200/blog/_search?pretty" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "match": {
+      "summary": "銀座のカフェを巡った日記"
+    }
+  }
+}'
 ```
 
 ## Postgresql データ投入
@@ -52,6 +62,7 @@ psql -h 127.0.0.1 -U maaaashi -d blog_db
 ```
 
 ```sql
+-- insert
 insert into blog (title, summary) values
   ('カフェ巡り', '銀座のカフェを巡った日記');
 
@@ -62,4 +73,16 @@ insert into tag (name) values
 insert into blog_tag (blog_title, tag_name) values
   ('カフェ巡り', 'cafe'),
   ('カフェ巡り', 'coffee');
+
+-- update
+update blog
+set summary = '東京のカフェを巡った日記'
+where title = 'カフェ巡り';
+
+-- delete
+delete from blog_tag
+where blog_title = 'カフェ巡り';
+
+delete from blog
+where title = 'カフェ巡り';
 ```
